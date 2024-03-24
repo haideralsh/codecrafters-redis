@@ -1,14 +1,17 @@
-export enum Resp {
+export enum RespType {
   Array = "*",
   SimpleString = "+",
   BulkString = "$",
+}
 
-  CRLF = "\r\n",
+export enum RespValue {
+  Crlf = "\r\n",
   NewLine = "\r",
+  Nil = "-1",
 }
 
 interface Token {
-  type: Resp;
+  type: RespType;
   value: string | Token[];
 }
 
@@ -26,13 +29,13 @@ export class Lexer {
       let char = this.input[this.postion];
 
       switch (char) {
-        case Resp.Array:
+        case RespType.Array:
           return this.scanArray();
 
-        case Resp.SimpleString:
+        case RespType.SimpleString:
           return this.scanSimpleString();
 
-        case Resp.BulkString:
+        case RespType.BulkString:
           return this.scanBulkString();
 
         default:
@@ -44,7 +47,7 @@ export class Lexer {
   private scanSimpleString(): Token {
     let start = ++this.postion;
 
-    while (this.input[this.postion] !== Resp.NewLine) {
+    while (this.input[this.postion] !== RespValue.NewLine) {
       this.postion++;
     }
 
@@ -52,7 +55,7 @@ export class Lexer {
 
     this.postion += 2;
 
-    return { type: Resp.SimpleString, value };
+    return { type: RespType.SimpleString, value };
   }
 
   private scanBulkString() {
@@ -62,7 +65,7 @@ export class Lexer {
 
     this.postion += length + 2;
 
-    return { type: Resp.BulkString, value };
+    return { type: RespType.BulkString, value };
   }
 
   private scanArray() {
@@ -74,7 +77,7 @@ export class Lexer {
       value.push(this.next());
     }
 
-    return { type: Resp.Array, value };
+    return { type: RespType.Array, value };
   }
 }
 
@@ -99,11 +102,11 @@ export class Parser {
 
   private parseToken(token: Token) {
     switch (token.type) {
-      case Resp.BulkString:
-      case Resp.SimpleString:
+      case RespType.BulkString:
+      case RespType.SimpleString:
         return token.value;
 
-      case Resp.Array:
+      case RespType.Array:
         return (token.value as Token[]).map((t) => this.parseToken(t));
     }
   }
