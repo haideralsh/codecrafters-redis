@@ -21,8 +21,17 @@ export class Controller {
         }
     }
     handleSet() {
-        const [key, value] = this.args;
-        this.store.set(key, value);
+        const [key, value, ...opts] = this.args;
+        if (opts.length === 0) {
+            this.store.set(key, value);
+            return Encoder.encode("OK");
+        }
+        let [opt, optVal] = opts;
+        switch (opt) {
+            case "px":
+                let timeToLive = parseInt(optVal);
+                this.store.set(key, value, timeToLive);
+        }
         return Encoder.encode("OK");
     }
     handleEcho() {

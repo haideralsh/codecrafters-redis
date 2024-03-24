@@ -5,11 +5,21 @@ export class Store {
     this.data = new Map();
   }
 
-  set(key: string, value: string) {
+  set(key: string, value: string, timeToLive?: number) {
     this.data.set(key, value);
+
+    if (timeToLive) {
+      setTimeout(() => {
+        this.delete(key);
+      }, timeToLive);
+    }
   }
 
   get(key: string): string | undefined {
     return this.data.get(key);
+  }
+
+  delete(key: string) {
+    this.data.delete(key);
   }
 }
