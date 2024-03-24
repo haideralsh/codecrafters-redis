@@ -1,5 +1,6 @@
 import * as net from "node:net";
 import { Lexer, Parser } from "./resp.js";
+import { Controller } from "./controller.js";
 
 const server = net.createServer((connection) => {
   connection.on("data", (buffer) => {
@@ -7,18 +8,12 @@ const server = net.createServer((connection) => {
 
     let lexer = new Lexer(input);
     let parser = new Parser(lexer);
+    let value = parser.parse();
 
-    let [cmd, ...args] = parser.parse();
+    let controller = new Controller(value);
+    let response = controller.handle();
 
-    console.log({ cmd, args });
-
-    if (cmd === "ping") {
-      return connection.write("+PONG\r\n");
-    } else if (cmd === "echo") {
-      return connection.write("+" + args.join(" ") + "\r\n");
-    }
-
-    connection.write("+OK\r\n");
+    connection.write(response);
   });
 });
 

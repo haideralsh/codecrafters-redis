@@ -1,10 +1,10 @@
-const CRLF = "\r\n";
-const NEWLINE = "\r";
-
-enum Resp {
+export enum Resp {
   Array = "*",
   SimpleString = "+",
   BulkString = "$",
+
+  CRLF = "\r\n",
+  NewLine = "\r",
 }
 
 interface Token {
@@ -44,7 +44,7 @@ export class Lexer {
   private scanSimpleString(): Token {
     let start = ++this.postion;
 
-    while (this.input[this.postion] !== NEWLINE) {
+    while (this.input[this.postion] !== Resp.NewLine) {
       this.postion++;
     }
 
