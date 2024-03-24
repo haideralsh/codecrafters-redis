@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "sourceMap": false
+  },
+  "include": ["app/**/*.ts"],
+  "exclude": ["node_modules"]
+}

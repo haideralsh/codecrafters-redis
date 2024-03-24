@@ -5,7 +5,7 @@
   "type": "module",
   "main": "app/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --watch"
   },
   "repository": {
     "type": "git",
@@ -13,5 +13,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.29"
+  }
 }
