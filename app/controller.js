@@ -1,12 +1,14 @@
+import { Cli } from "./cli.js";
 import { Encoder } from "./encoder.js";
-import { parseOptions } from "./main.js";
 export class Controller {
     cmd;
     args;
     store;
-    constructor(value, store) {
+    cli;
+    constructor(value, store, cli) {
         [this.cmd, ...this.args] = value;
         this.store = store;
+        this.cli = new Cli();
     }
     handle() {
         switch (this.cmd) {
@@ -22,6 +24,12 @@ export class Controller {
                 return this.handleInfo();
         }
     }
+    handleEcho() {
+        return Encoder.simpleString(this.args.join(" "));
+    }
+    handlePing() {
+        return Encoder.simpleString("PONG");
+    }
     handleGet() {
         let [key] = this.args;
         let value = this.store.get(key);
@@ -31,28 +39,22 @@ export class Controller {
     }
     handleSet() {
         const [key, value, ...opts] = this.args;
-        if (opts.length === 0) {
-            this.store.set(key, value);
-            return Encoder.simpleString("OK");
-        }
         let [opt, optVal] = opts;
         switch (opt) {
             case "px":
                 let timeToLive = parseInt(optVal);
                 this.store.set(key, value, timeToLive);
+            default:
+                this.store.set(key, value);
         }
         return Encoder.simpleString("OK");
     }
-    handleEcho() {
-        return Encoder.simpleString(this.args.join(" "));
-    }
-    handlePing() {
-        return Encoder.simpleString("PONG");
-    }
     handleInfo() {
-        let { replicaof: [masterHost], } = parseOptions();
-        return masterHost
-            ? Encoder.bulkString("role:slave")
-            : Encoder.bulkString("role:master");
+        let replicaof = this.cli.replicaof;
+        if (replicaof) {
+            let [masterHost] = this.cli.replicaof;
+            return Encoder.bulkString("role:slave");
+        }
+        return Encoder.bulkString("role:master");
     }
 }
