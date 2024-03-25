@@ -5,6 +5,7 @@ import { Store } from "./store.js";
 import { Lexer } from "./lexer.js";
 import { Parser } from "./parser.js";
 let store = new Store();
+export let port = parsePort();
 const server = net.createServer((connection) => {
     connection.on("data", (buffer) => {
         let input = buffer.toString();
@@ -16,7 +17,7 @@ const server = net.createServer((connection) => {
         connection.write(response);
     });
 });
-server.listen(parsePort(), "127.0.0.1");
+server.listen(port, "127.0.0.1");
 export function parsePort() {
     const parsedResult = parseArgs({
         options: {

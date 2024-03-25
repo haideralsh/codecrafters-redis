@@ -1,5 +1,4 @@
 import { Encoder } from "./encoder.js";
-import { RespType, RespValue } from "./resp.js";
 export class Controller {
     cmd;
     args;
@@ -18,20 +17,22 @@ export class Controller {
                 return this.handleSet();
             case "get":
                 return this.handleGet();
+            case "info":
+                return this.handleInfo();
         }
     }
     handleGet() {
         let [key] = this.args;
         let value = this.store.get(key);
         if (value)
-            return Encoder.encode(value);
-        return Encoder.encode(RespValue.Nil, RespType.BulkString);
+            return Encoder.simpleString(value);
+        return Encoder.nil();
     }
     handleSet() {
         const [key, value, ...opts] = this.args;
         if (opts.length === 0) {
             this.store.set(key, value);
-            return Encoder.encode("OK");
+            return Encoder.simpleString("OK");
         }
         let [opt, optVal] = opts;
         switch (opt) {
@@ -39,12 +40,15 @@ export class Controller {
                 let timeToLive = parseInt(optVal);
                 this.store.set(key, value, timeToLive);
         }
-        return Encoder.encode("OK");
+        return Encoder.simpleString("OK");
     }
     handleEcho() {
-        return Encoder.encode(this.args.join(" "));
+        return Encoder.simpleString(this.args.join(" "));
     }
     handlePing() {
-        return Encoder.encode("PONG");
+        return Encoder.simpleString("PONG");
+    }
+    handleInfo() {
+        return Encoder.bulkString("role:master");
     }
 }

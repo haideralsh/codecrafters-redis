@@ -1,5 +1,5 @@
 import { Encoder } from "./encoder.js";
-import { RespType, RespValue } from "./resp.js";
+import { RespValue } from "./resp.js";
 import { Store } from "./store.js";
 
 export class Controller {
@@ -25,15 +25,18 @@ export class Controller {
 
       case "get":
         return this.handleGet();
+
+      case "info":
+        return this.handleInfo();
     }
   }
 
   private handleGet() {
     let [key] = this.args;
     let value = this.store.get(key);
-    if (value) return Encoder.encode(value);
+    if (value) return Encoder.simpleString(value);
 
-    return Encoder.encode(RespValue.Nil, RespType.BulkString);
+    return Encoder.nil();
   }
 
   private handleSet() {
@@ -41,7 +44,7 @@ export class Controller {
 
     if (opts.length === 0) {
       this.store.set(key, value);
-      return Encoder.encode("OK");
+      return Encoder.simpleString("OK");
     }
 
     let [opt, optVal] = opts;
@@ -51,14 +54,18 @@ export class Controller {
         this.store.set(key, value, timeToLive);
     }
 
-    return Encoder.encode("OK");
+    return Encoder.simpleString("OK");
   }
 
   private handleEcho() {
-    return Encoder.encode(this.args.join(" "));
+    return Encoder.simpleString(this.args.join(" "));
   }
 
   private handlePing() {
-    return Encoder.encode("PONG");
+    return Encoder.simpleString("PONG");
+  }
+
+  private handleInfo() {
+    return Encoder.bulkString("role:master");
   }
 }
