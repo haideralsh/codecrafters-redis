@@ -1,8 +1,11 @@
 import { RespType, RespValue } from "./resp.js";
 
 export class Encoder {
-  static bulkString(value: string) {
-    return `${RespType.BulkString}${value.length}${RespValue.Crlf}${value}${RespValue.Crlf}`;
+  static bulkString(...values: string[]) {
+    let length = values.join("").length;
+    let output = values.join(RespValue.Crlf);
+
+    return `${RespType.BulkString}${length}${RespValue.Crlf}${output}${RespValue.Crlf}`;
   }
 
   static simpleString(value: string) {
