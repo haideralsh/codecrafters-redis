@@ -1,5 +1,5 @@
 import { Encoder } from "./encoder.js";
-import { RespValue } from "./resp.js";
+import { parseOptions } from "./main.js";
 import { Store } from "./store.js";
 
 export class Controller {
@@ -66,6 +66,12 @@ export class Controller {
   }
 
   private handleInfo() {
-    return Encoder.bulkString("role:master");
+    let {
+      replicaof: [masterHost],
+    } = parseOptions();
+
+    return masterHost
+      ? Encoder.bulkString("role:slave")
+      : Encoder.bulkString("role:master");
   }
 }

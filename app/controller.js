@@ -1,4 +1,5 @@
 import { Encoder } from "./encoder.js";
+import { parseOptions } from "./main.js";
 export class Controller {
     cmd;
     args;
@@ -49,6 +50,9 @@ export class Controller {
         return Encoder.simpleString("PONG");
     }
     handleInfo() {
-        return Encoder.bulkString("role:master");
+        let { replicaof: [masterHost], } = parseOptions();
+        return masterHost
+            ? Encoder.bulkString("role:slave")
+            : Encoder.bulkString("role:master");
     }
 }

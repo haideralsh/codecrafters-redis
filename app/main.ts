@@ -6,7 +6,7 @@ import { Lexer } from "./lexer.js";
 import { Parser } from "./parser.js";
 
 let store = new Store();
-export let port = parsePort();
+let { port } = parseOptions();
 
 const server = net.createServer((connection) => {
   connection.on("data", (buffer) => {
@@ -25,15 +25,25 @@ const server = net.createServer((connection) => {
 
 server.listen(port, "127.0.0.1");
 
-export function parsePort() {
+export function parseOptions() {
   const parsedResult = parseArgs({
+    allowPositionals: true,
     options: {
       port: {
+        type: "string",
+      },
+      replicaof: {
         type: "string",
       },
     },
   });
 
   let port = parsedResult.values.port;
-  return port ? parseInt(port) : 6379;
+  let masterHost = parsedResult.values.replicaof;
+  let [masterPort] = parsedResult.positionals;
+
+  return {
+    port: port ? parseInt(port) : 6379,
+    replicaof: [masterHost, masterPort],
+  };
 }
