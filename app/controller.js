@@ -20,6 +20,13 @@ export class Controller {
                 return this.handleGet();
         }
     }
+    handleGet() {
+        let [key] = this.args;
+        let value = this.store.get(key);
+        if (value)
+            return Encoder.encode(value);
+        return Encoder.encode(RespValue.Nil, RespType.BulkString);
+    }
     handleSet() {
         const [key, value, ...opts] = this.args;
         if (opts.length === 0) {
@@ -39,12 +46,5 @@ export class Controller {
     }
     handlePing() {
         return Encoder.encode("PONG");
-    }
-    handleGet() {
-        let [key] = this.args;
-        let value = this.store.get(key);
-        if (value)
-            return Encoder.encode(value);
-        return Encoder.encode(RespValue.Nil, RespType.BulkString);
     }
 }
