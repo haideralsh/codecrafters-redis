@@ -69,7 +69,6 @@ export class Controller {
     let replicaof = this.cli.replicaof;
 
     if (replicaof) {
-      let [masterHost] = this.cli.replicaof;
       return Encoder.bulkString(
         "role:slave",
         "master_repl_offset:0",
