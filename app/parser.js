@@ -1,8 +1,9 @@
+import { Lexer } from "./lexer.js";
 import { RespType } from "./resp.js";
 export class Parser {
     lexer;
-    constructor(lexer) {
-        this.lexer = lexer;
+    constructor(input) {
+        this.lexer = new Lexer(input);
     }
     parse() {
         let result = [];

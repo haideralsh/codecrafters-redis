@@ -4,8 +4,8 @@ import { RespType } from "./resp.js";
 export class Parser {
   private lexer: Lexer;
 
-  constructor(lexer: Lexer) {
-    this.lexer = lexer;
+  constructor(input: string) {
+    this.lexer = new Lexer(input);
   }
 
   parse() {

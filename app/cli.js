@@ -32,7 +32,7 @@ export class Cli {
         let replicaof;
         if (masterHost) {
             let [masterPort] = this.parsedArgs.positionals;
-            replicaof = [masterHost, masterPort];
+            replicaof = [masterHost, parseInt(masterPort)];
         }
         return replicaof;
     }

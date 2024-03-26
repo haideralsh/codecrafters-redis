@@ -11,7 +11,7 @@ export class Controller {
         this.cli = new Cli();
     }
     handle() {
-        switch (this.cmd) {
+        switch (this.cmd.toLowerCase()) {
             case "ping":
                 return this.handlePing();
             case "echo":
@@ -22,6 +22,8 @@ export class Controller {
                 return this.handleGet();
             case "info":
                 return this.handleInfo();
+            default:
+                throw new Error("Command not found");
         }
     }
     handleEcho() {
@@ -52,8 +54,8 @@ export class Controller {
     handleInfo() {
         let replicaof = this.cli.replicaof;
         if (replicaof) {
-            return Encoder.bulkString("role:slave", "master_repl_offset:0", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
+            return Encoder.bulkString("role:slave", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
         }
-        return Encoder.bulkString("role:master", "master_repl_offset:0", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
+        return Encoder.bulkString("role:master", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
     }
 }
