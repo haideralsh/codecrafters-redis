@@ -26,6 +26,10 @@ if (cli.replicaof) {
                 client.write(Encoder.array("replconf", "capa", "psync2"));
                 counter++;
             }
+            if (value === "OK" && counter === 2) {
+                client.write(Encoder.array("psync", "?", "-1"));
+                counter++;
+            }
         });
     });
 }
