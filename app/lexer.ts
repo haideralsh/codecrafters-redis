@@ -1,9 +1,10 @@
 import { RespType, RespValue } from "./resp.js";
 
-export interface Token {
-  type: RespType;
-  value: string | Token[];
-}
+type StringToken = { type: "SimpleString" | "BulkString"; value: string };
+
+type ArrayToken = { type: "Array"; value: StringToken[] };
+
+export type Token = StringToken | ArrayToken;
 
 export class Lexer {
   private readonly input: string;
@@ -34,7 +35,7 @@ export class Lexer {
     }
   }
 
-  private scanSimpleString(): Token {
+  private scanSimpleString(): StringToken {
     let start = ++this.postion;
 
     while (this.input[this.postion] !== RespValue.NewLine) {
@@ -45,21 +46,21 @@ export class Lexer {
 
     this.postion += 2;
 
-    return { type: RespType.SimpleString, value };
+    return { type: "SimpleString", value };
   }
 
-  private scanBulkString() {
-    let length = parseInt(this.scanSimpleString().value as string);
+  private scanBulkString(): StringToken {
+    let length = parseInt(this.scanSimpleString().value);
 
     let value = this.input.slice(this.postion, this.postion + length);
 
     this.postion += length + 2;
 
-    return { type: RespType.BulkString, value };
+    return { type: "BulkString", value };
   }
 
-  private scanArray() {
-    let length = parseInt(this.scanSimpleString().value as string);
+  private scanArray(): ArrayToken {
+    let length = parseInt(this.scanSimpleString().value);
 
     let value = [];
 
@@ -67,6 +68,6 @@ export class Lexer {
       value.push(this.next());
     }
 
-    return { type: RespType.Array, value };
+    return { type: "Array", value };
   }
 }

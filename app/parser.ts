@@ -22,11 +22,11 @@ export class Parser {
 
   private parseToken(token: Token) {
     switch (token.type) {
-      case RespType.BulkString:
-      case RespType.SimpleString:
+      case "BulkString":
+      case "SimpleString":
         return token.value;
 
-      case RespType.Array:
+      case "Array":
         return (token.value as Token[]).map((t) => this.parseToken(t));
     }
   }

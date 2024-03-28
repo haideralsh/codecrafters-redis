@@ -28,13 +28,13 @@ export class Lexer {
         }
         let value = this.input.slice(start, this.postion);
         this.postion += 2;
-        return { type: RespType.SimpleString, value };
+        return { type: "SimpleString", value };
     }
     scanBulkString() {
         let length = parseInt(this.scanSimpleString().value);
         let value = this.input.slice(this.postion, this.postion + length);
         this.postion += length + 2;
-        return { type: RespType.BulkString, value };
+        return { type: "BulkString", value };
     }
     scanArray() {
         let length = parseInt(this.scanSimpleString().value);
@@ -42,6 +42,6 @@ export class Lexer {
         for (let i = 0; i < length; i++) {
             value.push(this.next());
         }
-        return { type: RespType.Array, value };
+        return { type: "Array", value };
     }
 }

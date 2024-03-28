@@ -22,6 +22,10 @@ export class Controller {
                 return this.handleGet();
             case "info":
                 return this.handleInfo();
+            case "replconf":
+                return this.handleReplconf();
+            case "capa":
+                return this.handleCapa();
             default:
                 throw new Error("Command not found");
         }
@@ -57,5 +61,11 @@ export class Controller {
             return Encoder.bulkString("role:slave", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
         }
         return Encoder.bulkString("role:master", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
+    }
+    handleReplconf() {
+        return Encoder.simpleString("OK");
+    }
+    handleCapa() {
+        return Encoder.simpleString("OK");
     }
 }

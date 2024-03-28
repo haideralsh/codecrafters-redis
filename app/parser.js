@@ -1,5 +1,4 @@
 import { Lexer } from "./lexer.js";
-import { RespType } from "./resp.js";
 export class Parser {
     lexer;
     constructor(input) {
@@ -16,10 +15,10 @@ export class Parser {
     }
     parseToken(token) {
         switch (token.type) {
-            case RespType.BulkString:
-            case RespType.SimpleString:
+            case "BulkString":
+            case "SimpleString":
                 return token.value;
-            case RespType.Array:
+            case "Array":
                 return token.value.map((t) => this.parseToken(t));
         }
     }

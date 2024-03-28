@@ -31,6 +31,12 @@ export class Controller {
       case "info":
         return this.handleInfo();
 
+      case "replconf":
+        return this.handleReplconf();
+
+      case "capa":
+        return this.handleCapa();
+
       default:
         throw new Error("Command not found");
     }
@@ -84,5 +90,13 @@ export class Controller {
       "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
       "master_repl_offset:0"
     );
+  }
+
+  private handleReplconf() {
+    return Encoder.simpleString("OK");
+  }
+
+  private handleCapa() {
+    return Encoder.simpleString("OK");
   }
 }
