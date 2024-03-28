@@ -8,8 +8,25 @@ let store = new Store();
 let cli = new Cli();
 if (cli.replicaof) {
     const [masterHost, masterPort] = cli.replicaof;
+    let counter = 0;
     const client = net.createConnection(masterPort, masterHost, () => {
         client.write(Encoder.array("ping"));
+        client.on("data", (buffer) => {
+            let input = buffer.toString();
+            let parser = new Parser(input);
+            let [value] = parser.parse();
+            value == value.toLowerCase();
+            if (value === "PONG" && counter === 0) {
+                console.log("in the pong");
+                client.write(Encoder.array("replconf", "listening-port", String(cli.port)));
+                counter++;
+            }
+            if (value === "OK" && counter === 1) {
+                console.log("in the pong");
+                client.write(Encoder.array("replconf", "capa", "psync2"));
+                counter++;
+            }
+        });
     });
 }
 const server = net.createServer((connection) => {
