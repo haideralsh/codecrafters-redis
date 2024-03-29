@@ -1,8 +1,10 @@
 import { parseArgs } from "util";
 
+export type Replicaof = [string, number] | undefined;
+
 interface Args {
   port: number;
-  replicaof: [string, number] | undefined;
+  replicaof: Replicaof;
 }
 
 export class Cli {
@@ -41,9 +43,7 @@ export class Cli {
   get replicaof(): Args["replicaof"] {
     let masterHost = this.parsedArgs.values.replicaof;
 
-    if (!masterHost) {
-      return undefined;
-    }
+    if (!masterHost) return;
 
     let [masterPort] = this.parsedArgs.positionals;
     return [masterHost, parseInt(masterPort)];

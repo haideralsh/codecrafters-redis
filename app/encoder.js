@@ -4,8 +4,8 @@ export class Encoder {
         let output = values.join(RespValue.Crlf);
         return `${RespType.BulkString}${output.length}${RespValue.Crlf}${output}${RespValue.Crlf}`;
     }
-    static simpleString(value) {
-        return `${RespType.SimpleString}${value}${RespValue.Crlf}`;
+    static simpleString(...values) {
+        return `${RespType.SimpleString}${values.join(" ")}${RespValue.Crlf}`;
     }
     static nil() {
         return `${RespType.BulkString}${RespValue.Nil}${RespValue.Crlf}`;

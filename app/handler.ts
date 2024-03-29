@@ -2,7 +2,9 @@ import { Cli } from "./cli.js";
 import { Encoder } from "./encoder.js";
 import { Store } from "./store.js";
 
-export class Controller {
+const HARDCODED_REPL_ID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
+
+export class Handler {
   private cmd: string;
   private args: string[];
   private store: Store;
@@ -11,7 +13,7 @@ export class Controller {
   constructor(value: string[], store: Store, cli: Cli) {
     [this.cmd, ...this.args] = value;
     this.store = store;
-    this.cli = new Cli();
+    this.cli = cli;
   }
 
   handle() {
@@ -36,6 +38,9 @@ export class Controller {
 
       case "capa":
         return this.handleCapa();
+
+      case "psync":
+        return this.handlePsync();
 
       default:
         throw new Error("Command not found");
@@ -80,14 +85,14 @@ export class Controller {
     if (replicaof) {
       return Encoder.bulkString(
         "role:slave",
-        "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+        `master_replid:${HARDCODED_REPL_ID}`,
         "master_repl_offset:0"
       );
     }
 
     return Encoder.bulkString(
       "role:master",
-      "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb",
+      `master_replid:${HARDCODED_REPL_ID}`,
       "master_repl_offset:0"
     );
   }
@@ -98,5 +103,9 @@ export class Controller {
 
   private handleCapa() {
     return Encoder.simpleString("OK");
+  }
+
+  private handlePsync() {
+    return Encoder.simpleString("FULLRESYNC", HARDCODED_REPL_ID, "0");
   }
 }

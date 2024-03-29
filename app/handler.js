@@ -1,6 +1,6 @@
-import { Cli } from "./cli.js";
 import { Encoder } from "./encoder.js";
-export class CmdHandler {
+const HARDCODED_REPL_ID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
+export class Handler {
     cmd;
     args;
     store;
@@ -8,7 +8,7 @@ export class CmdHandler {
     constructor(value, store, cli) {
         [this.cmd, ...this.args] = value;
         this.store = store;
-        this.cli = new Cli();
+        this.cli = cli;
     }
     handle() {
         switch (this.cmd.toLowerCase()) {
@@ -26,6 +26,8 @@ export class CmdHandler {
                 return this.handleReplconf();
             case "capa":
                 return this.handleCapa();
+            case "psync":
+                return this.handlePsync();
             default:
                 throw new Error("Command not found");
         }
@@ -58,14 +60,17 @@ export class CmdHandler {
     handleInfo() {
         let replicaof = this.cli.replicaof;
         if (replicaof) {
-            return Encoder.bulkString("role:slave", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
+            return Encoder.bulkString("role:slave", `master_replid:${HARDCODED_REPL_ID}`, "master_repl_offset:0");
         }
-        return Encoder.bulkString("role:master", "master_replid:8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb", "master_repl_offset:0");
+        return Encoder.bulkString("role:master", `master_replid:${HARDCODED_REPL_ID}`, "master_repl_offset:0");
     }
     handleReplconf() {
         return Encoder.simpleString("OK");
     }
     handleCapa() {
         return Encoder.simpleString("OK");
+    }
+    handlePsync() {
+        return Encoder.simpleString("FULLRESYNC", HARDCODED_REPL_ID, "0");
     }
 }

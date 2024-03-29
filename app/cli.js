@@ -29,9 +29,8 @@ export class Cli {
     }
     get replicaof() {
         let masterHost = this.parsedArgs.values.replicaof;
-        if (!masterHost) {
-            return undefined;
-        }
+        if (!masterHost)
+            return;
         let [masterPort] = this.parsedArgs.positionals;
         return [masterHost, parseInt(masterPort)];
     }

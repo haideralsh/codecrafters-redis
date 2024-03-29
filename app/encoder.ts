@@ -7,8 +7,8 @@ export class Encoder {
     return `${RespType.BulkString}${output.length}${RespValue.Crlf}${output}${RespValue.Crlf}`;
   }
 
-  static simpleString(value: string) {
-    return `${RespType.SimpleString}${value}${RespValue.Crlf}`;
+  static simpleString(...values: string[]) {
+    return `${RespType.SimpleString}${values.join(" ")}${RespValue.Crlf}`;
   }
 
   static nil() {
