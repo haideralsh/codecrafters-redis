@@ -17,7 +17,7 @@ export class Replica {
         const client = createConnection(masterPort, masterHost, () => {
             this.client = client;
             this.client.write(Encoder.array("ping"));
-            this.state = "pinged";
+            this.state = "sent-ping";
             client.on("data", (buffer) => this.handleMasterResponse(buffer));
         });
     }
@@ -27,20 +27,29 @@ export class Replica {
         let [value] = parser.parse();
         switch (value.toLowerCase()) {
             case "pong":
-                this.client.write(Encoder.array("replconf", "listening-port", String(this.cli.port)));
-                this.state = "ponged";
+                this.handlePong();
                 break;
             case "ok":
-                if (this.state === "ponged") {
-                    this.client.write(Encoder.array("replconf", "capa", "psync2"));
-                    this.state = "capaed";
+                if (this.state === "sent-port") {
+                    this.handleCapabilities();
                     break;
                 }
-                if (this.state === "capaed") {
-                    this.client.write(Encoder.array("psync", "?", "-1"));
-                    this.state = "psynced";
+                if (this.state === "sent-cababilities") {
+                    this.handlePsync();
                     break;
                 }
         }
+    }
+    handlePong() {
+        this.client.write(Encoder.array("replconf", "listening-port", String(this.cli.port)));
+        this.state = "sent-port";
+    }
+    handleCapabilities() {
+        this.client.write(Encoder.array("replconf", "capa", "psync2"));
+        this.state = "sent-cababilities";
+    }
+    handlePsync() {
+        this.client.write(Encoder.array("psync", "?", "-1"));
+        this.state = "sent-psync";
     }
 }
