@@ -12,8 +12,8 @@ type Step =
 
 export class Replica {
   private step: Step;
-  private client: Socket;
   private cliArgs: CliArgs;
+  private client: Socket;
 
   constructor(cliArgs: CliArgs) {
     this.step = "initial";

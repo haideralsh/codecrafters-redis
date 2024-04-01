@@ -3,8 +3,8 @@ import { Encoder } from "./encoder.js";
 import { Parser } from "./parser.js";
 export class Replica {
     step;
-    client;
     cliArgs;
+    client;
     constructor(cliArgs) {
         this.step = "initial";
         this.cliArgs = cliArgs;
