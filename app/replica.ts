@@ -1,9 +1,9 @@
 import { Socket, createConnection } from "net";
-import { Args, Cli } from "./cli.js";
+import { CliArgs } from "./cliArgs.js";
 import { Encoder } from "./encoder.js";
 import { Parser } from "./parser.js";
 
-type State =
+type Step =
   | "initial"
   | "sent-ping"
   | "sent-port"
@@ -11,15 +11,13 @@ type State =
   | "sent-psync";
 
 export class Replica {
-  private state: State;
+  private step: Step;
   private client: Socket;
-  private replicaof: Args["replicaof"];
-  private port: Args["port"];
+  private cliArgs: CliArgs;
 
-  constructor(replicaof: Args["replicaof"], port: Args["port"]) {
-    this.state = "initial";
-    this.replicaof = replicaof;
-    this.port = port;
+  constructor(cliArgs: CliArgs) {
+    this.step = "initial";
+    this.cliArgs = cliArgs;
   }
 
   init() {
@@ -27,13 +25,13 @@ export class Replica {
   }
 
   private connectToMaster() {
-    const [masterHost, masterPort] = this.replicaof;
+    const [masterHost, masterPort] = this.cliArgs.replicaof;
 
     const client = createConnection(masterPort, masterHost, () => {
       this.client = client;
 
       this.client.write(Encoder.array("ping"));
-      this.state = "sent-ping";
+      this.step = "sent-ping";
 
       client.on("data", (buffer) => this.handleMasterResponse(buffer));
     });
@@ -51,12 +49,12 @@ export class Replica {
         break;
 
       case "ok":
-        if (this.state === "sent-port") {
+        if (this.step === "sent-port") {
           this.handleCapabilities();
           break;
         }
 
-        if (this.state === "sent-cababilities") {
+        if (this.step === "sent-cababilities") {
           this.handlePsync();
           break;
         }
@@ -65,18 +63,18 @@ export class Replica {
 
   private handlePong() {
     this.client.write(
-      Encoder.array("replconf", "listening-port", String(this.port))
+      Encoder.array("replconf", "listening-port", String(this.cliArgs.port))
     );
-    this.state = "sent-port";
+    this.step = "sent-port";
   }
 
   private handleCapabilities() {
     this.client.write(Encoder.array("replconf", "capa", "psync2"));
-    this.state = "sent-cababilities";
+    this.step = "sent-cababilities";
   }
 
   private handlePsync() {
     this.client.write(Encoder.array("psync", "?", "-1"));
-    this.state = "sent-psync";
+    this.step = "sent-psync";
   }
 }

@@ -2,24 +2,22 @@ import { createConnection } from "net";
 import { Encoder } from "./encoder.js";
 import { Parser } from "./parser.js";
 export class Replica {
-    state;
+    step;
     client;
-    replicaof;
-    port;
-    constructor(replicaof, port) {
-        this.state = "initial";
-        this.replicaof = replicaof;
-        this.port = port;
+    cliArgs;
+    constructor(cliArgs) {
+        this.step = "initial";
+        this.cliArgs = cliArgs;
     }
     init() {
         this.connectToMaster();
     }
     connectToMaster() {
-        const [masterHost, masterPort] = this.replicaof;
+        const [masterHost, masterPort] = this.cliArgs.replicaof;
         const client = createConnection(masterPort, masterHost, () => {
             this.client = client;
             this.client.write(Encoder.array("ping"));
-            this.state = "sent-ping";
+            this.step = "sent-ping";
             client.on("data", (buffer) => this.handleMasterResponse(buffer));
         });
     }
@@ -32,26 +30,26 @@ export class Replica {
                 this.handlePong();
                 break;
             case "ok":
-                if (this.state === "sent-port") {
+                if (this.step === "sent-port") {
                     this.handleCapabilities();
                     break;
                 }
-                if (this.state === "sent-cababilities") {
+                if (this.step === "sent-cababilities") {
                     this.handlePsync();
                     break;
                 }
         }
     }
     handlePong() {
-        this.client.write(Encoder.array("replconf", "listening-port", String(this.port)));
-        this.state = "sent-port";
+        this.client.write(Encoder.array("replconf", "listening-port", String(this.cliArgs.port)));
+        this.step = "sent-port";
     }
     handleCapabilities() {
         this.client.write(Encoder.array("replconf", "capa", "psync2"));
-        this.state = "sent-cababilities";
+        this.step = "sent-cababilities";
     }
     handlePsync() {
         this.client.write(Encoder.array("psync", "?", "-1"));
-        this.state = "sent-psync";
+        this.step = "sent-psync";
     }
 }

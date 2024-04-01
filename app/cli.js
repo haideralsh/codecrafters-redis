@@ -1,5 +1,5 @@
 import { parseArgs } from "util";
-export class Cli {
+export class CliArgs {
     static config = {
         allowPositionals: true,
         options: {
@@ -14,9 +14,9 @@ export class Cli {
     parsedArgs;
     static defaultPort = 6379;
     constructor() {
-        this.parsedArgs = parseArgs(Cli.config);
+        this.parsedArgs = parseArgs(CliArgs.config);
     }
-    get args() {
+    get all() {
         return {
             port: this.port,
             replicaof: this.replicaof,
@@ -25,7 +25,7 @@ export class Cli {
     get port() {
         return this.parsedArgs.values.port
             ? parseInt(this.parsedArgs.values.port)
-            : Cli.defaultPort;
+            : CliArgs.defaultPort;
     }
     get replicaof() {
         let masterHost = this.parsedArgs.values.replicaof;

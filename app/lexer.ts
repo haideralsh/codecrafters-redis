@@ -1,7 +1,6 @@
 import { RespType, RespValue } from "./resp.js";
 
 type StringToken = { type: "SimpleString" | "BulkString"; value: string };
-
 type ArrayToken = { type: "Array"; value: StringToken[] };
 
 export type Token = StringToken | ArrayToken;

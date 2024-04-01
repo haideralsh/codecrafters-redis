@@ -1,15 +1,15 @@
 import { Encoder } from "./encoder.js";
 import { EMPTY_RDB_FILE_HEX } from "./rdb.js";
 const HARDCODED_REPL_ID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
-export class Handler {
+export class CmdHandler {
     cmd;
     args;
     store;
-    cli;
-    constructor(value, store, cli) {
+    cliArgs;
+    constructor(value, store, cliArgs) {
         [this.cmd, ...this.args] = value;
         this.store = store;
-        this.cli = cli;
+        this.cliArgs = cliArgs;
     }
     handle() {
         switch (this.cmd.toLowerCase()) {
@@ -59,7 +59,7 @@ export class Handler {
         return Encoder.simpleString("OK");
     }
     handleInfo() {
-        let replicaof = this.cli.replicaof;
+        let replicaof = this.cliArgs.replicaof;
         if (replicaof) {
             return Encoder.bulkString("role:slave", `master_replid:${HARDCODED_REPL_ID}`, "master_repl_offset:0");
         }

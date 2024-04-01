@@ -1,15 +1,15 @@
 import * as net from "node:net";
-import { Handler } from "./handler.js";
+import { CommandHandler } from "./CommandHandler.js";
 import { Store } from "./store.js";
 import { Parser } from "./parser.js";
-import { Cli } from "./cli.js";
+import { CliArgs } from "./cliArgs.js";
 import { Replica } from "./replica.js";
 
 let store = new Store();
-let cli = new Cli();
+let cliArgs = new CliArgs();
 
-if (cli.replicaof) {
-  new Replica(cli.replicaof, cli.port).init();
+if (cliArgs.replicaof) {
+  new Replica(cliArgs).init();
 }
 
 const server = net.createServer((connection) => {
@@ -19,11 +19,11 @@ const server = net.createServer((connection) => {
     let parser = new Parser(input);
     let value = parser.parse();
 
-    let handler = new Handler(value, store, cli);
+    let handler = new CommandHandler(value, store, cliArgs);
     let response = handler.handle();
 
     connection.write(response);
   });
 });
 
-server.listen(cli.port, "127.0.0.1");
+server.listen(cliArgs.port, "127.0.0.1");

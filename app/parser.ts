@@ -26,7 +26,7 @@ export class Parser {
         return token.value;
 
       case "Array":
-        return (token.value as Token[]).map((t) => this.parseToken(t));
+        return token.value.map((t) => this.parseToken(t));
     }
   }
 }
