@@ -1,5 +1,4 @@
 import { Lexer, Token } from "./lexer.js";
-import { RespType } from "./resp.js";
 
 export class Parser {
   private lexer: Lexer;

@@ -4,16 +4,18 @@ import { Parser } from "./parser.js";
 export class Replica {
     state;
     client;
-    cli;
-    constructor(cli) {
+    replicaof;
+    port;
+    constructor(replicaof, port) {
         this.state = "initial";
-        this.cli = cli;
+        this.replicaof = replicaof;
+        this.port = port;
     }
     init() {
         this.connectToMaster();
     }
     connectToMaster() {
-        const [masterHost, masterPort] = this.cli.replicaof;
+        const [masterHost, masterPort] = this.replicaof;
         const client = createConnection(masterPort, masterHost, () => {
             this.client = client;
             this.client.write(Encoder.array("ping"));
@@ -41,7 +43,7 @@ export class Replica {
         }
     }
     handlePong() {
-        this.client.write(Encoder.array("replconf", "listening-port", String(this.cli.port)));
+        this.client.write(Encoder.array("replconf", "listening-port", String(this.port)));
         this.state = "sent-port";
     }
     handleCapabilities() {

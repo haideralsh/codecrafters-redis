@@ -1,4 +1,5 @@
 import { Encoder } from "./encoder.js";
+import { EMPTY_RDB_FILE_HEX } from "./rdb.js";
 const HARDCODED_REPL_ID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
 export class Handler {
     cmd;
@@ -71,6 +72,9 @@ export class Handler {
         return Encoder.simpleString("OK");
     }
     handlePsync() {
-        return Encoder.simpleString("FULLRESYNC", HARDCODED_REPL_ID, "0");
+        let cmd = Encoder.simpleString("FULLRESYNC", HARDCODED_REPL_ID, "0");
+        let file = Buffer.from(EMPTY_RDB_FILE_HEX, "hex");
+        let header = `$${file.length}\r\n`;
+        return Buffer.concat([cmd, header, file].map(Buffer.from));
     }
 }

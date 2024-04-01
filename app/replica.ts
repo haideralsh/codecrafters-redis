@@ -1,5 +1,5 @@
 import { Socket, createConnection } from "net";
-import { Cli } from "./cli.js";
+import { Args, Cli } from "./cli.js";
 import { Encoder } from "./encoder.js";
 import { Parser } from "./parser.js";
 
@@ -13,11 +13,13 @@ type State =
 export class Replica {
   private state: State;
   private client: Socket;
-  private cli: Cli;
+  private replicaof: Args["replicaof"];
+  private port: Args["port"];
 
-  constructor(cli: Cli) {
+  constructor(replicaof: Args["replicaof"], port: Args["port"]) {
     this.state = "initial";
-    this.cli = cli;
+    this.replicaof = replicaof;
+    this.port = port;
   }
 
   init() {
@@ -25,7 +27,7 @@ export class Replica {
   }
 
   private connectToMaster() {
-    const [masterHost, masterPort] = this.cli.replicaof;
+    const [masterHost, masterPort] = this.replicaof;
 
     const client = createConnection(masterPort, masterHost, () => {
       this.client = client;
@@ -63,7 +65,7 @@ export class Replica {
 
   private handlePong() {
     this.client.write(
-      Encoder.array("replconf", "listening-port", String(this.cli.port))
+      Encoder.array("replconf", "listening-port", String(this.port))
     );
     this.state = "sent-port";
   }

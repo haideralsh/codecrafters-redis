@@ -2,7 +2,7 @@ import { parseArgs } from "util";
 
 export type Replicaof = [string, number] | undefined;
 
-interface Args {
+export interface Args {
   port: number;
   replicaof: Replicaof;
 }

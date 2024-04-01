@@ -7,7 +7,7 @@ import { Replica } from "./replica.js";
 let store = new Store();
 let cli = new Cli();
 if (cli.replicaof) {
-    new Replica(cli).init();
+    new Replica(cli.replicaof, cli.port).init();
 }
 const server = net.createServer((connection) => {
     connection.on("data", (buffer) => {

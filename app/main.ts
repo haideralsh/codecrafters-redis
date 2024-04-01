@@ -2,15 +2,14 @@ import * as net from "node:net";
 import { Handler } from "./handler.js";
 import { Store } from "./store.js";
 import { Parser } from "./parser.js";
-import { Cli, Replicaof } from "./cli.js";
-import { Encoder } from "./encoder.js";
+import { Cli } from "./cli.js";
 import { Replica } from "./replica.js";
 
 let store = new Store();
 let cli = new Cli();
 
 if (cli.replicaof) {
-  new Replica(cli).init();
+  new Replica(cli.replicaof, cli.port).init();
 }
 
 const server = net.createServer((connection) => {
