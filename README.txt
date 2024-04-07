@@ -1,3 +1,7 @@
-A Redis clone in Node.js built for learning purposes.
+A subset of Redis in Node.js built for learning purposes. 
 
-Tests runner is hosted on codecrafters.io.
+Subsets covered:
+- Commands: ping, echo, set (with expire), get, info
+- Replication
+
+Test runners are hosted on codecrafters.io.
