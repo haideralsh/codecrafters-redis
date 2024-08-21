@@ -1,4 +1,4 @@
-export class Store {
+export default class Store {
   private data: Map<string, string>;
 
   constructor() {

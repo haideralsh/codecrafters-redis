@@ -5,7 +5,7 @@ type ArrayToken = { type: "Array"; value: StringToken[] };
 
 export type Token = StringToken | ArrayToken;
 
-export class Lexer {
+export default class Lexer {
   private readonly input: string;
   private postion: number;
 

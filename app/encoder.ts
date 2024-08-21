@@ -1,6 +1,6 @@
 import { RespType, RespValue } from "./resp.js";
 
-export class Encoder {
+export default class Encoder {
   static bulkString(...values: string[]) {
     let output = values.join(RespValue.Crlf);
 

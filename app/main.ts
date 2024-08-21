@@ -1,8 +1,8 @@
 import * as net from "node:net";
-import { CommandHandler } from "./CommandHandler.js";
-import { Store } from "./store.js";
-import { Parser } from "./parser.js";
-import { CliArgs } from "./cliArgs.js";
+import CommandHandler from "./command_handler.js";
+import Store from "./store.js";
+import Parser from "./parser.js";
+import CliArgs from "./cli_arguments.js";
 import { Replica } from "./replica.js";
 
 let store = new Store();

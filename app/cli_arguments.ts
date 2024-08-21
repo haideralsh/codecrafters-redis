@@ -7,8 +7,10 @@ export interface Args {
   replicaof: Replicaof;
 }
 
-export class CliArgs {
-  private static config = {
+type ParsedArgs = ReturnType<typeof parseArgs<typeof CliArguments.config>>;
+
+export default class CliArguments {
+  public static config = {
     allowPositionals: true,
     options: {
       port: {
@@ -20,11 +22,11 @@ export class CliArgs {
     },
   } as const;
 
-  private parsedArgs;
+  private parsedArgs: ParsedArgs;
   private static defaultPort = 6379;
 
   constructor() {
-    this.parsedArgs = parseArgs(CliArgs.config);
+    this.parsedArgs = parseArgs(CliArguments.config);
   }
 
   get all(): Args {
@@ -37,7 +39,7 @@ export class CliArgs {
   get port() {
     return this.parsedArgs.values.port
       ? parseInt(this.parsedArgs.values.port)
-      : CliArgs.defaultPort;
+      : CliArguments.defaultPort;
   }
 
   get replicaof(): Args["replicaof"] {

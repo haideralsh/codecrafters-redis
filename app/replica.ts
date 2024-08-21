@@ -1,7 +1,7 @@
 import { Socket, createConnection } from "net";
-import { CliArgs } from "./cliArgs.js";
-import { Encoder } from "./encoder.js";
-import { Parser } from "./parser.js";
+import CliArgs from "./cli_arguments.js";
+import Encoder from "./encoder.js";
+import Parser from "./parser.js";
 
 type Step =
   | "initial"
@@ -63,7 +63,7 @@ export class Replica {
 
   private handlePong() {
     this.client.write(
-      Encoder.array("replconf", "listening-port", String(this.cliArgs.port))
+      Encoder.array("replconf", "listening-port", String(this.cliArgs.port)),
     );
     this.step = "sent-port";
   }

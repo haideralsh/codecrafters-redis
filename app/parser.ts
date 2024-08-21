@@ -1,6 +1,6 @@
-import { Lexer, Token } from "./lexer.js";
+import Lexer, { Token } from "./lexer.js";
 
-export class Parser {
+export default class Parser {
   private lexer: Lexer;
 
   constructor(input: string) {

@@ -1,17 +1,17 @@
-import { CliArgs } from "./cliArgs.js";
-import { Encoder } from "./encoder.js";
+import CliArguments from "./cli_arguments.js";
+import Encoder from "./encoder.js";
 import { EMPTY_RDB_FILE_HEX } from "./rdb.js";
-import { Store } from "./store.js";
+import Store from "./store.js";
 
 const HARDCODED_REPL_ID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
 
-export class CommandHandler {
+export default class CommandHandler {
   private cmd: string;
   private args: string[];
   private store: Store;
-  private cliArgs: CliArgs;
+  private cliArgs: CliArguments;
 
-  constructor(value: string[], store: Store, cliArgs: CliArgs) {
+  constructor(value: string[], store: Store, cliArgs: CliArguments) {
     [this.cmd, ...this.args] = value;
     this.store = store;
     this.cliArgs = cliArgs;
@@ -87,14 +87,14 @@ export class CommandHandler {
       return Encoder.bulkString(
         "role:slave",
         `master_replid:${HARDCODED_REPL_ID}`,
-        "master_repl_offset:0"
+        "master_repl_offset:0",
       );
     }
 
     return Encoder.bulkString(
       "role:master",
       `master_replid:${HARDCODED_REPL_ID}`,
-      "master_repl_offset:0"
+      "master_repl_offset:0",
     );
   }
 
